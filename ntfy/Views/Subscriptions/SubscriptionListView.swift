@@ -40,6 +40,7 @@ struct SubscriptionListView: View {
                                 pollSubscriptions()
                             } label: {
                                 Image(systemName: "arrow.clockwise")
+                                    .accessibilityLabel("Refresh subscriptions")
                             }
                         }
                     }
@@ -77,6 +78,7 @@ struct SubscriptionListView: View {
                     self.showingAddDialog = true
                 } label: {
                     Image(systemName: "plus")
+                        .accessibilityLabel("Add subscription")
                 }
             }
         }
