@@ -100,10 +100,10 @@ struct NotificationRowView: View {
                             .foregroundColor(.gray)
                         if [1,2,4,5].contains(notification.priority) {
                             Image("priority-\(notification.priority)")
-                                .accessibilityLabel(notification.priority == 5 ? "Urgent priority" : notification.priority == 4 ? "High priority" : notification.priority == 2 ? "Low priority" : "Minimum priority")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 16, height: 16)
+                                .accessibilityLabel(priorityAccessibilityLabel)
                         }
                         switch notification.encryptionState {
                         case .none:
@@ -195,6 +195,15 @@ struct NotificationRowView: View {
             onPlainTap: handleRowTap
         )
         .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var priorityAccessibilityLabel: String {
+        switch notification.priority {
+        case 5: "Urgent priority"
+        case 4: "High priority"
+        case 2: "Low priority"
+        default: "Minimum priority"
+        }
     }
 
     private var isEditing: Bool {
