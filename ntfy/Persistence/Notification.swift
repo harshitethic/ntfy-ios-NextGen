@@ -493,7 +493,9 @@ struct Message: Decodable {
             Log.d(Store.tag, "Unknown or irrelevant message", userInfo)
             return nil
         }
-        let message = userInfo["message"] as? String
+        // Full push payloads bypass JSONDecoder: use the same wire decoding as polling.
+        let message = Self.decodeWireMessage(userInfo["message"] as? String,
+                                             encoding: userInfo["encoding"] as? String)
         let title = userInfo["title"] as? String
         let priority = Int16(userInfo["priority"] as? String ?? "3") ?? 3
         let tags = (userInfo["tags"] as? String ?? "").components(separatedBy: ",")
