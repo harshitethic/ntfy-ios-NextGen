@@ -6626,4 +6626,29 @@ final class MessageEncodingTests: XCTestCase {
         XCTAssertEqual(try decode("not-base64!", encoding: "base64").message,
                        "This notification contains non-text data (base64).")
     }
+
+    func testFullPushUserInfoDecodesBase64Message() {
+        let userInfo: [AnyHashable: Any] = [
+            "id": "m1", "time": "1", "event": "message", "topic": "test",
+            "message": "SGVsbG8g8J+Riw==", "encoding": "base64"
+        ]
+        let message = Message.from(userInfo: userInfo)
+        XCTAssertEqual(message?.message, "Hello 👋")
+        XCTAssertEqual(message?.toUserInfo()["message"] as? String, "Hello 👋",
+                       "The notification extension must pass decoded text to banners and storage")
+    }
+
+    func testFullPushUserInfoPreservesPlainTextAndHidesMalformedBase64() {
+        var userInfo: [AnyHashable: Any] = [
+            "id": "m2", "time": "2", "event": "message", "topic": "test",
+            "message": "SGVsbG8="
+        ]
+        XCTAssertEqual(Message.from(userInfo: userInfo)?.message, "SGVsbG8=")
+        userInfo["encoding"] = "unknown"
+        XCTAssertEqual(Message.from(userInfo: userInfo)?.message, "SGVsbG8=")
+        userInfo["encoding"] = "base64"
+        userInfo["message"] = "not-base64!"
+        XCTAssertEqual(Message.from(userInfo: userInfo)?.message,
+                       "This notification contains non-text data (base64).")
+    }
 }
